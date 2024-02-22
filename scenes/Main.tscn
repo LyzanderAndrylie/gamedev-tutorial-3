@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://Scenes/Ground.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://scenes/Main.gd" type="Script" id=3]
 
 [node name="Root" type="Node2D"]
+script = ExtResource( 3 )
 
 [node name="Ground" parent="." instance=ExtResource( 1 )]
 position = Vector2( 507.708, 363.86 )
@@ -16,3 +18,41 @@ position = Vector2( 225.95, 294.562 )
 
 [node name="Player" parent="." instance=ExtResource( 2 )]
 position = Vector2( 507, 273 )
+
+[node name="Control" type="Control" parent="."]
+margin_left = 0.999998
+margin_top = 0.999999
+margin_right = 41.0
+margin_bottom = 41.0
+rect_rotation = -0.0609926
+
+[node name="JumpLeft" type="Label" parent="Control"]
+margin_left = 15.9882
+margin_top = 11.0894
+margin_right = 83.9882
+margin_bottom = 25.0894
+text = "Jump Left: "
+
+[node name="RightDashState" type="Label" parent="Control"]
+margin_left = 14.968
+margin_top = 30.0883
+margin_right = 109.968
+margin_bottom = 44.0883
+rect_rotation = 0.218328
+text = "Right Dash Active: "
+
+[node name="LeftDashState" type="Label" parent="Control"]
+margin_left = 13.9478
+margin_top = 49.0873
+margin_right = 85.9478
+margin_bottom = 63.0873
+text = "Left Dash Active:"
+
+[node name="DashCooldown" type="Label" parent="Control"]
+margin_left = 13.9276
+margin_top = 70.0883
+margin_right = 122.928
+margin_bottom = 93.0883
+rect_rotation = -0.22184
+rect_scale = Vector2( 1.00001, 0.936914 )
+text = "Dash Cooldown: "

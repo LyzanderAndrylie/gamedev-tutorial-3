@@ -73,6 +73,14 @@ Fitur lanjutan terkait dengan mekanika pergerakan karakter di game *platformer* 
     var right_dash_enable = false
     var left_dash_enable = false
 
+    func get_input():
+        velocity.x = 0
+        
+        dash()
+    
+        ...
+
+
     func dash():
         # enable dash ke arah kanan
         if Input.is_action_just_released('right') and current_dash_cooldown_time == 0:
@@ -113,6 +121,38 @@ Fitur lanjutan terkait dengan mekanika pergerakan karakter di game *platformer* 
         
     ```
 
+3. Crouching
+
+    Pergerakan *crouching* memungkinkan pemain untuk bisa dapat jongkok dimana sprite-nya terlihat lebih kecil  dan kecepatan pergerakannya menjadi lebih lambat ketika lagi jongkok. Implementasi pergerakan ini adalah sebagai berikut.
+
+    - Ketika pemain menekan tombol "crouch" (ALT atau SHIFT), kecepatan pergerakan pemain pada sumbu x harus dikurangkan, misalnya dibagi dengan 2. Dengan demikian, pergerakan karakter akan menjadi lebih lambat ketika *crouch*.
+
+    Berikut adalah kode implementasinya dengan komen.
+
+    ```py
+    var crouch_active = false
+
+    func get_input():
+        velocity.x = 0
+        
+        crouch()
+    
+        ...
+
+
+    func crouch():
+        if Input.is_action_pressed("crouch"):
+            # Pengurangan velocity x menjadi setengahnya ketika tombol "crouch" ditekan
+            velocity.x = velocity.x / 2 
+            crouch_active = true
+            $Sprite.texture = load("res://assets/kenney_platformercharacters/PNG/Player/Poses/player_duck.png")
+
+        if Input.is_action_just_released("crouch"):
+            crouch_active = false
+            $Sprite.texture = load("res://assets/kenney_platformercharacters/PNG/Player/Poses/player_idle.png")
+    ```
+
 ## Sumber Referensi
 
 1. [Godot Tutorial - How to Print any variable to screen](https://www.youtube.com/watch?v=NLpWkpZ_mCo)
+2. [how to change sprite from code](https://forum.godotengine.org/t/how-to-change-sprite-from-code/14939)

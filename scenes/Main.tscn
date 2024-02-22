@@ -56,3 +56,10 @@ margin_bottom = 93.0883
 rect_rotation = -0.22184
 rect_scale = Vector2( 1.00001, 0.936914 )
 text = "Dash Cooldown: "
+
+[node name="CrouchState" type="Label" parent="Control"]
+margin_left = 14.9063
+margin_top = 88.0159
+margin_right = 54.9063
+margin_bottom = 102.016
+text = "Crouch Active: "

@@ -34,28 +34,35 @@ func move_right():
 	if !Input.is_action_pressed("right"):
 		return
 	velocity.x += speed
-	$Sprite.set_flip_h(false)
+	$AnimatedSprite.flip_h = false
+	
+	if ($AnimatedSprite.get_animation() == "lompat_kanan"): 
+		return
+	
+	$AnimatedSprite.play("jalan_kanan")
 
 
 func move_left():
 	if !Input.is_action_pressed("left"):
 		return
 	velocity.x -= speed
-	$Sprite.set_flip_h(true)
-
+	
+	$AnimatedSprite.flip_h = true
+	
+	if ($AnimatedSprite.get_animation() == "lompat_kanan"): 
+		return
+	
+	$AnimatedSprite.play("jalan_kanan")
+	
 
 func double_jump():
 	if is_on_floor():
 		jump_count = 0
-		$Sprite.texture = load(
-			"res://assets/kenney_platformercharacters/PNG/Player/Poses/player_idle.png"
-		)
+		$AnimatedSprite.play("diri_kanan")
 	if Input.is_action_just_pressed("up") and jump_count < max_jump:
 		velocity.y = jump_speed
 		jump_count += 1
-		$Sprite.texture = load(
-			"res://assets/kenney_platformercharacters/PNG/Player/Poses/player_jump.png"
-		)
+		$AnimatedSprite.play("lompat_kanan")
 
 
 func dash():
@@ -86,15 +93,11 @@ func crouch():
 	if Input.is_action_pressed("crouch"):
 		velocity.x = velocity.x / 2
 		crouch_active = true
-		$Sprite.texture = load(
-			"res://assets/kenney_platformercharacters/PNG/Player/Poses/player_duck.png"
-		)
+		$AnimatedSprite.play("jongkok_kanan")
 
 	if Input.is_action_just_released("crouch"):
 		crouch_active = false
-		$Sprite.texture = load(
-			"res://assets/kenney_platformercharacters/PNG/Player/Poses/player_idle.png"
-		)
+		$AnimatedSprite.play("diri_kanan")
 
 
 func _physics_process(delta):

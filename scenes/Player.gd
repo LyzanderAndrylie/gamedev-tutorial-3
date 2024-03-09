@@ -63,6 +63,7 @@ func double_jump():
 		velocity.y = jump_speed
 		jump_count += 1
 		$AnimatedSprite.play("lompat_kanan")
+		$AudioStreamPlayer2D.play()
 
 
 func dash():
@@ -102,6 +103,7 @@ func crouch():
 
 func _physics_process(delta):
 	velocity.y += delta * GRAVITY
+	
 	current_dash_active_time = (
 		current_dash_active_time - delta
 		if current_dash_active_time > 0
@@ -113,4 +115,27 @@ func _physics_process(delta):
 		else 0
 	)
 	get_input()
+	
+	var last_velocity = velocity
 	velocity = move_and_slide(velocity, UP)
+	
+	var isCollide = false
+	
+	for i in get_slide_count():
+		var collision = get_slide_collision(i)
+		
+		if collision.get_collider().name != 'Zombie':
+			continue
+		
+		print("I collided with ", collision.get_collider().name)
+		
+		velocity = last_velocity.bounce(collision.normal)
+		isCollide = true
+		
+		
+	if isCollide:
+		velocity.x *= 5
+		velocity = move_and_slide(velocity, UP)
+		$Ough.play()
+		
+	

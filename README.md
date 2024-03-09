@@ -156,3 +156,99 @@ Fitur lanjutan terkait dengan mekanika pergerakan karakter di game *platformer* 
 
 1. [Godot Tutorial - How to Print any variable to screen](https://www.youtube.com/watch?v=NLpWkpZ_mCo)
 2. [how to change sprite from code](https://forum.godotengine.org/t/how-to-change-sprite-from-code/14939)
+
+<hr>
+
+# Tutorial 5 - Game Development 2023/2024
+
+## Latihan Mandiri: Membuat dan Menambah Variasi Aset
+
+Silakan eksplorasi lebih lanjut mengenai animasi berdasarkan spritesheet dan audio. Untuk latihan mandiri yang dikerjakan di akhir tutorial, kamu diharapkan untuk:
+
+1. Membuat minimal 1 (satu) objek baru di dalam permainan yang dilengkapi dengan animasi menggunakan spritesheet selain yang disediakan tutorial.
+
+    Implementasi ini dapat dilakukan dengan memperoleh asset baru dari internet, seperti <https://www.kenney.nl/assets/toon-characters-1>, dan membuat *scene* `KinematicBody2D` baru yang terdiri atas *node* `AnimatedSprite` dengan asset baru tersebut dan `CollisionShape2D`.
+
+2. Membuat minimal 1 (satu) audio untuk efek suara (SFX) dan memasukkannya ke dalam permainan. Kamu dapat membuatnya sendiri atau mencari dari koleksi aset gratis.
+
+    Implementasi ini dapat dilakukan dengan memperoleh asset audio dari internet, seperti <https://pixabay.com/id/sound-effects/cartoon-jump-6462/>, dan kemudian memasukkannya ke dalam permainan dengan memanfaatkan *scene* `AudioStreamPlayer2D`. Dalam implementasi yang saya lakukan, saya menambahkan SFX ketika *scene* `Player` melompat. Hal ini dapat dilakukan dengan memainkan audio tersebut melalui godot script ketika *scene* `Player` melakukan lompatan. Implementasi hal tersebut adalah sebagai berikut.
+
+    ```py
+    func double_jump():
+        if is_on_floor():
+            jump_count = 0
+            $AnimatedSprite.play("diri_kanan")
+        if Input.is_action_just_pressed("up") and jump_count < max_jump:
+            velocity.y = jump_speed
+            jump_count += 1
+            $AnimatedSprite.play("lompat_kanan")
+            $AudioStreamPlayer2D.play() # Tambahan: memainkan audio ketika pemain melompat
+    ```
+
+3. Membuat minimal 1 (satu) musik latar (background music) dan memasukkannya ke dalam permainan. Kamu dapat membuatnya sendiri atau mencari dari koleksi aset gratis.
+
+    Implementasi ini dapat dilakukan dengan memperoleh asset background music dari internet dan kemudian memasukkannya ke dalam permainan dengan memanfaatkan *scene* `AudioStreamPlayer2D` sebagai child dari *root node* dan mengatur properti `Autoplay` dengan mencentang tombol `On`. Karena background music dari *tutorial* sudah oke, saya tidak mengganti background music tersebut.
+
+4. Implementasikan interaksi antara objek baru tersebut dengan objek yang dikendalikan pemain. Misalnya, pemain dapat menciptakan atau menghilangkan objek baru tersebut ketika menekan suatu tombol atau tabrakan dengan objek lain di dunia permainan.
+
+    Implementasi interaksi antara objek baru tersebut dengan objek yang dikendalikan oleh pemain adalah ketika pemain bertabrakan dengan objek baru tersebut, pemain akan mental. Implementasi dilakukan dengan menambahkan kode berikut. Secara sederhana, ketika terjadi tabrakan dengan *scene* `Zombie`, arah `Vector2D` terhadap sumbu x atau y tinggal dibalik (menjadi negatif). Selain itu, untuk mengatasi *bounce* terhadap sumbu x, `velocity.x` harus diperbesar agar memiliki efek yang lebih terasa.
+
+    ```py
+    func _physics_process(delta):
+        velocity.y += delta * GRAVITY
+        
+        current_dash_active_time = (
+            current_dash_active_time - delta
+            if current_dash_active_time > 0
+            else 0
+        )
+        current_dash_cooldown_time = (
+            current_dash_cooldown_time - delta
+            if current_dash_cooldown_time > 0
+            else 0
+        )
+        get_input()
+        
+        var last_velocity = velocity
+        velocity = move_and_slide(velocity, UP)
+        
+        var isCollide = false
+        
+        for i in get_slide_count():
+            var collision = get_slide_collision(i)
+            
+            if collision.get_collider().name != 'Zombie':
+                continue
+            
+            print("I collided with ", collision.get_collider().name)
+            
+            velocity = last_velocity.bounce(collision.normal)
+            isCollide = true
+            
+            
+        if isCollide:
+            velocity.x *= 5
+            velocity = move_and_slide(velocity, UP)
+    ```
+
+5. Implementasikan audio feedback dari interaksi antara objek baru dengan objek pemain. Misalnya, muncul efek suara ketika pemain tabrakan dengan objek baru.
+
+    Implementasi ini dapat dilakukan dengan menambahkan *node* `Audio2DStreamPlayer2D` dengan audio dari <https://pixabay.com/id/sound-effects/search/hurt/> pada *scene* `Player` dan kemudian memainkannya ketika terjadi tabrakan antara `Player` tersebut dengan `Zombie`. Implementasi hal tersebut adalah sebagai berikut.
+
+    ```py
+    if isCollide:
+        velocity.x *= 5
+        velocity = move_and_slide(velocity, UP)
+        $Ough.play()
+    ```
+
+6. Implementasi sistem audio yang relatif terhadap posisi objek. Misalnya, musik latar akan semakin terdengar samar ketika pemain semakin jauh dari posisi awal level.
+
+    Implementasi hal ini dapat dilakukan dengan menambahkan *node* `Audio2DStreamPlayer2D` pada suatu objek, seperti `Zombie`, dan kemudian mengatur properti, seperti `Max Distance` dan `Attenuation` dari `Audio2DStreamPlayer2D` pada objek tersebut. Kemudian, untuk mengimplemnetasikan audio dari `Zombie` yang relatif terhadap posisi `Player`, kita harus menambahkan node `Camera2D` di untuk objek `Player` tersebut. Dengan demikian, audio yang bersifat relatif bedasarkan jarak dari `Player` dengan `Zombie` dapat diimplementasikan.
+
+## Sumber Referensi
+
+1. [Collision Detection dengan KinematicBody2D](https://random-game-project.blogspot.com/2021/05/collision-detection-dengan.html)
+2. [`move_and_slide()` vs `move_and_collide()`](https://forum.godotengine.org/t/kinematicbody3d-move-and-slide-vs-move-and-collide-any-logic-in-different-input-and-output/23101/2)
+3. [Detecting collisions](https://docs.godotengine.org/en/stable/tutorials/physics/using_character_body_2d.html#detecting-collisions)
+4. [Get collider name with KinematicBody](https://forum.godotengine.org/t/get-collider-name-with-kinematicbody/22569/2)
